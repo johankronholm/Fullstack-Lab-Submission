@@ -1,0 +1,26 @@
+{
+  "name": "fullstack-lab-submission",
+  "version": "1.0.0",
+  "description": "Backend setup for the fullstack lab submission. ",
+  "homepage": "https://github.com/johankronholm/Fullstack-Lab-Submission#readme",
+  "bugs": {
+    "url": "https://github.com/johankronholm/Fullstack-Lab-Submission/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johankronholm/Fullstack-Lab-Submission.git"
+  },
+  "license": "ISC",
+  "author": "Johan Kronholm",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "mysql2": "^3.20.0",
+    "nodemon": "^3.1.14"
+  }
+}
