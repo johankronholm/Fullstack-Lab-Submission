@@ -12,7 +12,7 @@ model.createUser = async (username, password) => {
   } else {
     const newUser = { username: username, password: password };
     usersModel.create(newUser);
-    return true;
+    return newUser;
   }
 };
 
@@ -20,11 +20,11 @@ model.loginUser = async (username, password) => {
   if (!username || !password) {
     return false;
   }
-  const found = await usersModel.findOne({ username: username });
-  if (!found) {
+  const user = await usersModel.findOne({ username: username });
+  if (!user) {
     return false;
   }
   else {
-    return found.password === password;
+    return user.password === password ? user : false;
   }
 };

@@ -1,12 +1,15 @@
 import { useRef } from "react";
 import { useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import type { User } from "../types/user";
 
 type LoggedInProps = {
-  setLoggedIn: Function;
+  setUser: Dispatch<SetStateAction<User | null>>;
 };
 
-function Login({ setLoggedIn }: LoggedInProps) {
+function Login({ setUser }: LoggedInProps) {
   const [loginStatus, setLoginStatus] = useState("Enter forms below");
+  const [registerStatus, setRegisterStatus] = useState("Enter forms below");
   const [toggleCreateUser, setToggleCreateUser] = useState(false);
 
   const usernameRef = useRef<HTMLInputElement>(null);
@@ -24,9 +27,10 @@ function Login({ setLoggedIn }: LoggedInProps) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-    
-    setLoggedIn(response.ok);
-    {!response.ok && setLoginStatus("Invalid username/password!")} 
+
+    const data = await response.json();
+    console.log(data);
+    response.ok ? setUser(data.user) : setLoginStatus(data.message);
   };
 
   const register = async () => {
@@ -39,16 +43,35 @@ function Login({ setLoggedIn }: LoggedInProps) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-
-    setLoggedIn(response.ok);
+    const data = await response.json();
+    console.log(data);
+    response.ok ? setUser(data.user) : setRegisterStatus(data.message);
   };
 
   return (
     <div>
       <h2>Login</h2>
       <p>{loginStatus}</p>
-      <input type="text" ref={usernameRef} defaultValue={"Username"} onClick={() => {if (usernameRef.current) { usernameRef.current.value = ""}}}></input>
-      <input type="text" ref={passwordRef} defaultValue={"Password"} onClick={() => {if (passwordRef.current) { passwordRef.current.value = ""}}}></input>
+      <input
+        type="text"
+        ref={usernameRef}
+        defaultValue={"Username"}
+        onClick={() => {
+          if (usernameRef.current) {
+            usernameRef.current.value = "";
+          }
+        }}
+      ></input>
+      <input
+        type="text"
+        ref={passwordRef}
+        defaultValue={"Password"}
+        onClick={() => {
+          if (passwordRef.current) {
+            passwordRef.current.value = "";
+          }
+        }}
+      ></input>
       <button name="submit" onClick={login}>
         Login
       </button>
@@ -59,8 +82,27 @@ function Login({ setLoggedIn }: LoggedInProps) {
       {toggleCreateUser && (
         <div>
           <h3>Create a new user</h3>
-          <input type="text" ref={newUsernameRef}></input>
-          <input type="text" ref={newPasswordRef}></input>
+          <p>{registerStatus}</p>
+          <input
+            type="text"
+            ref={newUsernameRef}
+            defaultValue={"Username"}
+            onClick={() => {
+              if (newUsernameRef.current) {
+                newUsernameRef.current.value = "";
+              }
+            }}
+          ></input>
+          <input
+            type="text"
+            ref={newPasswordRef}
+            defaultValue={"Password"}
+            onClick={() => {
+              if (newPasswordRef.current) {
+                newPasswordRef.current.value = "";
+              }
+            }}
+          ></input>
           <button onClick={register}>Create user</button>
         </div>
       )}
