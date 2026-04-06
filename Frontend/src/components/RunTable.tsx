@@ -1,4 +1,5 @@
 import type { User } from "../types/user";
+import EditRun from "./EditRun";
 import { useState } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
@@ -7,7 +8,7 @@ type RunTableProps = {
   user: User;
 };
 
-type Run = {
+export type Run = {
   _id: string;
   title: string;
   distance: number;
@@ -18,6 +19,8 @@ type Run = {
 
 function RunTable({ user: _user }: RunTableProps) {
   const [createToggled, setToggleCreate] = useState(false);
+  const [editToggled, setToggleEdit] = useState(false);
+  const [runToEdit, setRunToEdit] = useState<Run | null>(null);
   const [fetchedRuns, setFetchedRuns] = useState<Run[]>([]);
 
   const titleRef = useRef<HTMLInputElement>(null);
@@ -61,12 +64,34 @@ function RunTable({ user: _user }: RunTableProps) {
 
   useEffect(() => {
     getRuns();
-    createRun();
   }, []);
+
+  const configureRun = (_id: string) => {
+    setToggleEdit(true);
+    const selectedRun = fetchedRuns.find((e) => e._id === _id);
+    if (!selectedRun) return;
+    setRunToEdit(selectedRun);
+  };
+
+  const deleteRun = async (_id: string) => {
+    const response = await fetch(`http://localhost:3000/api/runs?id=${_id}`, {
+      method: "delete",
+    });
+    if (response.ok) {
+      getRuns();
+    }
+  };
 
   return (
     <>
       <div>
+        {editToggled && runToEdit && (
+          <EditRun
+            key={runToEdit._id}
+            getRuns={getRuns}
+            selectedRun={runToEdit}
+          />
+        )}
         <h2>Latest runs</h2>
         <table>
           <thead>
@@ -89,11 +114,18 @@ function RunTable({ user: _user }: RunTableProps) {
                   {new Date(r.date).getDay()}/{new Date(r.date).getMonth()}/
                   {new Date(r.date).getFullYear()}
                 </td>
+                <td>
+                  <span onClick={() => configureRun(r._id)}>Edit</span>
+                </td>
+                <td>
+                  <span onClick={() => deleteRun(r._id)}>Remove</span>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      <hr></hr>
       <span onClick={() => setToggleCreate((prev) => !prev)}>Add new run</span>
 
       {createToggled && (

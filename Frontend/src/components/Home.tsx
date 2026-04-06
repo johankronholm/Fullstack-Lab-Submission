@@ -9,7 +9,9 @@ function Home( {user } : HomeProps ) {
   return (
     <>
       <h1>Welcome {user.username}!</h1>
+      <hr></hr>
       <RunTable user={user}/>
+      
     </>
   );
 }

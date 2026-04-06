@@ -55,7 +55,7 @@ function Login({ setUser }: LoggedInProps) {
       <input
         type="text"
         ref={usernameRef}
-        defaultValue={"Username"}
+        placeholder="Username"
         onClick={() => {
           if (usernameRef.current) {
             usernameRef.current.value = "";
@@ -63,9 +63,9 @@ function Login({ setUser }: LoggedInProps) {
         }}
       ></input>
       <input
-        type="text"
+        type="password"
         ref={passwordRef}
-        defaultValue={"Password"}
+        placeholder="Password"
         onClick={() => {
           if (passwordRef.current) {
             passwordRef.current.value = "";
