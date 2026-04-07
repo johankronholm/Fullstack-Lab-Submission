@@ -1,12 +1,14 @@
 import mongoose from "mongoose";
 
-const schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-const runSchema = new schema({
-    user: String,
+const runSchema = new Schema({
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
+    },
     title: String,
     distance: Number,
-    minutes: Number,
     seconds: Number,
     date: Date
 

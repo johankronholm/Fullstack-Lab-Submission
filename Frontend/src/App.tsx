@@ -8,12 +8,15 @@ function App() {
 
   return (
     <>
-      {user && <Home user={user} />}
+      {user && <Home setUser={setUser} user={user} />}
       {!user && <Login setUser={setUser} />}
     </>
   );
 }
 export default App;
 
-//Add: PUT route for runs, update runs on client side. DELETE route for runs, delete runs on client side.
-//Fix: Try/catch and polished input validation for DB processing
+//Add: Pagination
+//Add: Personal Best collection, updates personal best when adding/editing run in 3000ms interval. 
+//Fix: Input validation on client side 
+//Fix: Only store seconds in db for record comparison
+//Fix: Minutes and seconds conversion on client side

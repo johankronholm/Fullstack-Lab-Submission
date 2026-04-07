@@ -1,17 +1,25 @@
 import { model as runsModel } from "./run.js";
+import { model as personalBestsModel } from "./personalBestModel.js";
 export const model = {};
 
-model.getRuns = async () => {
+model.getRuns = async (userId) => {
   try {
-    const runs = await runsModel.find({ user: "admin" });
+    const runs = await runsModel.find({ userId: userId });
     return runs;
   } catch (error) {
     return false;
   }
 };
 
-model.createRun = async (title, distance, minutes, seconds, date) => {
-  if (title == null || title === "" || distance == null || distance === "") {
+model.createRun = async (userId, title, distance, minutes, seconds, date) => {
+  if (
+    userId == null ||
+    userId === "" ||
+    title == null ||
+    title === "" ||
+    distance == null ||
+    distance === ""
+  ) {
     return false;
   }
 
@@ -22,25 +30,28 @@ model.createRun = async (title, distance, minutes, seconds, date) => {
     return false;
   }
 
+  const minutesToSeconds = minutesNumber * 60;
+
   const parsedDate = new Date(date);
 
   if (date == null || date === "") {
     return false;
   }
-
+  const totalSeconds = Number(seconds) + minutesToSeconds;
   const newRun = {
-    user: "admin",
+    userId: userId,
     title: title,
     distance: distance,
-    minutes: minutes,
-    seconds: seconds,
+    seconds: totalSeconds,
     date: parsedDate,
   };
 
   try {
-    runsModel.create(newRun);
+    const createdRun = await runsModel.create(newRun);
+    await personalBestsModel.updatePB(newRun, createdRun._id, totalSeconds);
     return true;
   } catch (error) {
+    console.error(error);
     return false;
   }
 };
@@ -64,6 +75,9 @@ model.editRun = async (id, title, distance, minutes, seconds, date) => {
     return false;
   }
 
+  const minutesToSeconds = minutesNumber * 60;
+  const totalSeconds = Number(seconds) + minutesToSeconds;
+
   const parsedDate = new Date(date);
 
   if (date == null || date === "") {
@@ -80,13 +94,13 @@ model.editRun = async (id, title, distance, minutes, seconds, date) => {
   }
 
   try {
-    await runsModel.findByIdAndUpdate(id, {
+    const newRun = await runsModel.findByIdAndUpdate(id, {
       title: title,
       distance: distance,
-      minutes: minutes,
-      seconds: seconds,
+      seconds: totalSeconds,
       date: parsedDate,
     });
+    await personalBestsModel.updatePB(newRun, id, totalSeconds);
     return true;
   } catch (error) {
     return false;
@@ -100,6 +114,7 @@ model.deleteRun = async (id) => {
   }
   try {
     await runsModel.findByIdAndDelete(id);
+    await personalBestsModel.removePB(id);
     return true;
   } catch (error) {
     return false;

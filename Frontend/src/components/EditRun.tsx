@@ -3,11 +3,11 @@ import { useRef } from "react";
 
 type EditRunProps = {
   selectedRun: Run | null;
-  getRuns: Function
+  getRuns: Function;
+  setToggleEdit: Function;
 };
 
-function EditRun({ selectedRun, getRuns }: EditRunProps) {
-
+function EditRun({ selectedRun, getRuns, setToggleEdit }: EditRunProps) {
   const titleRef = useRef<HTMLInputElement>(null);
   const distanceRef = useRef<HTMLInputElement>(null);
   const minutesRef = useRef<HTMLInputElement>(null);
@@ -30,7 +30,7 @@ function EditRun({ selectedRun, getRuns }: EditRunProps) {
       body: JSON.stringify(body),
     });
 
-    console.log(await response.json())
+    console.log(await response.json());
     if (response.ok) {
       getRuns();
     }
@@ -38,7 +38,7 @@ function EditRun({ selectedRun, getRuns }: EditRunProps) {
 
   return (
     <>
-      <h2>Edit run</h2>
+      <span onClick={() => setToggleEdit(false)}>Close</span>
 
       <table>
         <thead>
@@ -53,19 +53,43 @@ function EditRun({ selectedRun, getRuns }: EditRunProps) {
         <tbody>
           <tr>
             <td>
-              <input type="text" ref={titleRef} defaultValue={selectedRun?.title}></input>
+              <input
+                type="text"
+                ref={titleRef}
+                defaultValue={selectedRun?.title}
+              ></input>
             </td>
             <td>
-              <input type="number" ref={distanceRef} defaultValue={selectedRun?.distance}></input>
+              <input
+                type="number"
+                ref={distanceRef}
+                min={0}
+                defaultValue={selectedRun?.distance}
+              ></input>
             </td>
             <td>
-              <input type="number" ref={minutesRef} defaultValue={selectedRun?.minutes}></input>
+              <input
+                type="number"
+                ref={minutesRef}
+                min={0}
+                defaultValue={selectedRun?.minutes}
+              ></input>
             </td>
             <td>
-              <input type="number" ref={secondsRef} defaultValue={selectedRun?.seconds}></input>
+              <input
+                type="number"
+                ref={secondsRef}
+                min={0}
+                max={59}
+                defaultValue={selectedRun?.seconds}
+              ></input>
             </td>
             <td>
-              <input type="text" ref={dateRef} defaultValue={selectedRun?.date}></input>
+              <input
+                type="text"
+                ref={dateRef}
+                defaultValue={selectedRun?.date}
+              ></input>
             </td>
             <td>
               <button onClick={saveEdit}>Save</button>

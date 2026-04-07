@@ -22,6 +22,7 @@ function RunTable({ user: _user }: RunTableProps) {
   const [editToggled, setToggleEdit] = useState(false);
   const [runToEdit, setRunToEdit] = useState<Run | null>(null);
   const [fetchedRuns, setFetchedRuns] = useState<Run[]>([]);
+  const [maxElements, setMaxElements] = useState<number>(10);
 
   const titleRef = useRef<HTMLInputElement>(null);
   const distanceRef = useRef<HTMLInputElement>(null);
@@ -30,7 +31,9 @@ function RunTable({ user: _user }: RunTableProps) {
   const dateRef = useRef<HTMLInputElement>(null);
 
   const getRuns = async () => {
-    const response = await fetch("http://localhost:3000/api/runs");
+    const response = await fetch(
+      `http://localhost:3000/api/runs?userId=${"69d5380a46781fc0ce9593d8"}`,
+    );
     const data = await response.json();
     setFetchedRuns(data.data);
   };
@@ -44,6 +47,7 @@ function RunTable({ user: _user }: RunTableProps) {
 
     const newDate = new Date(dateValue);
     const body = {
+      id: "69d5380a46781fc0ce9593d8",
       title: titleRef.current?.value,
       distance: distanceRef.current?.value,
       minutes: minutesRef.current?.value,
@@ -74,11 +78,23 @@ function RunTable({ user: _user }: RunTableProps) {
   };
 
   const deleteRun = async (_id: string) => {
+    const confirm = window.confirm("Are you sure you want to delete your run?");
+    if (!confirm) return;
     const response = await fetch(`http://localhost:3000/api/runs?id=${_id}`, {
       method: "delete",
     });
     if (response.ok) {
       getRuns();
+    }
+  };
+
+  const incrementPageNumber = () => {
+    setMaxElements((prev) => (prev += 10));
+    console.log(maxElements);
+  };
+  const decrementPageNumber = () => {
+    if (maxElements > 10) {
+      setMaxElements((prev) => (prev -= 10));
     }
   };
 
@@ -90,6 +106,7 @@ function RunTable({ user: _user }: RunTableProps) {
             key={runToEdit._id}
             getRuns={getRuns}
             selectedRun={runToEdit}
+            setToggleEdit={setToggleEdit}
           />
         )}
         <h2>Latest runs</h2>
@@ -103,40 +120,69 @@ function RunTable({ user: _user }: RunTableProps) {
             </tr>
           </thead>
           <tbody>
-            {fetchedRuns.map((r) => (
-              <tr key={r._id}>
-                <td>{r.title}</td>
-                <td>{r.distance} km</td>
-                <td>
-                  {r.minutes}.{r.seconds}
-                </td>
-                <td>
-                  {new Date(r.date).getDay()}/{new Date(r.date).getMonth()}/
-                  {new Date(r.date).getFullYear()}
-                </td>
-                <td>
-                  <span onClick={() => configureRun(r._id)}>Edit</span>
-                </td>
-                <td>
-                  <span onClick={() => deleteRun(r._id)}>Remove</span>
-                </td>
-              </tr>
-            ))}
+            {fetchedRuns.slice(maxElements - 10, maxElements).map((r) => {
+              const minutes = Math.floor(r.seconds / 60);
+              const seconds = r.seconds % 60;
+              return (
+                <tr key={r._id}>
+                  <td>{r.title}</td>
+                  <td>{r.distance} km</td>
+                  <td>
+                    {minutes}m {seconds}s
+                  </td>
+                  <td>
+                    {new Date(r.date).getDate()}/
+                    {new Date(r.date).getMonth() + 1}/
+                    {new Date(r.date).getFullYear()}
+                  </td>
+                  <td>
+                    <span onClick={() => configureRun(r._id)}>Edit</span>
+                  </td>
+                  <td>
+                    <span onClick={() => deleteRun(r._id)}>Remove</span>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
+
+        {fetchedRuns.length > 0 && (
+          <div>
+            Page {maxElements / 10} of {Math.ceil(fetchedRuns.length / 10)}
+          </div>
+        )}
+
+        {maxElements > 10 && (
+          <span onClick={decrementPageNumber}>Previous </span>
+        )}
+
+        {fetchedRuns.length > maxElements && (
+          <span onClick={incrementPageNumber}>Next </span>
+        )}
       </div>
-      <hr></hr>
       <span onClick={() => setToggleCreate((prev) => !prev)}>Add new run</span>
 
       {createToggled && (
         <div>
           <h2>New run</h2>
           <input type="text" placeholder="Title" ref={titleRef} />
-          <input type="text" placeholder="Distance (km)" ref={distanceRef} />
-          <input type="number" placeholder="Minutes" ref={minutesRef} />
-          <input type="number" placeholder="Seconds" ref={secondsRef} />
-          <input type="text" placeholder="Date" ref={dateRef} />
-          <button onClick={createRun}>Submit</button>
+          <input
+            type="number"
+            min={0}
+            placeholder="Distance (km)"
+            ref={distanceRef}
+          />
+          <input type="number" min={0} placeholder="Minutes" ref={minutesRef} />
+          <input
+            type="number"
+            min={0}
+            max={59}
+            placeholder="Seconds"
+            ref={secondsRef}
+          />
+          <input type="text" placeholder="Date (YYYY-MM-DD)" ref={dateRef} />
+          <button onClick={createRun}>Add</button>
         </div>
       )}
     </>
