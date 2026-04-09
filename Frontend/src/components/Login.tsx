@@ -1,13 +1,11 @@
 import { useRef } from "react";
 import { useState } from "react";
-import type { Dispatch, SetStateAction } from "react";
-import type { User } from "../types/user";
 
 type LoggedInProps = {
-  setUser: Dispatch<SetStateAction<User | null>>;
+  saveLocalUser: Function;
 };
 
-function Login({ setUser }: LoggedInProps) {
+function Login({ saveLocalUser }: LoggedInProps) {
   const [loginStatus, setLoginStatus] = useState("Enter forms below");
   const [registerStatus, setRegisterStatus] = useState("Enter forms below");
   const [toggleCreateUser, setToggleCreateUser] = useState(false);
@@ -30,7 +28,7 @@ function Login({ setUser }: LoggedInProps) {
 
     const data = await response.json();
     console.log(data);
-    response.ok ? setUser(data.user) : setLoginStatus(data.message);
+    response.ok ? saveLocalUser(data.user) : setLoginStatus(data.message);
   };
 
   const register = async () => {
@@ -45,7 +43,8 @@ function Login({ setUser }: LoggedInProps) {
     });
     const data = await response.json();
     console.log(data);
-    response.ok ? setUser(data.user) : setRegisterStatus(data.message);
+    response.ok ? saveLocalUser(data.user) : setRegisterStatus(data.message);
+    console.log(data);
   };
 
   return (
@@ -86,7 +85,7 @@ function Login({ setUser }: LoggedInProps) {
           <input
             type="text"
             ref={newUsernameRef}
-            defaultValue={"Username"}
+            placeholder={"Username"}
             onClick={() => {
               if (newUsernameRef.current) {
                 newUsernameRef.current.value = "";
@@ -96,7 +95,7 @@ function Login({ setUser }: LoggedInProps) {
           <input
             type="text"
             ref={newPasswordRef}
-            defaultValue={"Password"}
+            placeholder={"Password"}
             onClick={() => {
               if (newPasswordRef.current) {
                 newPasswordRef.current.value = "";

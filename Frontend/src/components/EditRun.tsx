@@ -1,13 +1,19 @@
-import type { Run } from "./RunTable";
+import type { Run } from "../types/run";
 import { useRef } from "react";
 
 type EditRunProps = {
   selectedRun: Run | null;
   getRuns: Function;
   setToggleEdit: Function;
+  setError: Function;
 };
 
-function EditRun({ selectedRun, getRuns, setToggleEdit }: EditRunProps) {
+function EditRun({
+  selectedRun,
+  getRuns,
+  setToggleEdit,
+  setError,
+}: EditRunProps) {
   const titleRef = useRef<HTMLInputElement>(null);
   const distanceRef = useRef<HTMLInputElement>(null);
   const minutesRef = useRef<HTMLInputElement>(null);
@@ -29,17 +35,19 @@ function EditRun({ selectedRun, getRuns, setToggleEdit }: EditRunProps) {
       headers: { "Content-type": "Application/json" },
       body: JSON.stringify(body),
     });
-
-    console.log(await response.json());
+    const data = await response.json();
+    console.log(data);
     if (response.ok) {
+      setError(null);
+      setToggleEdit(false);
       getRuns();
+    } else {
+      setError(data.message);
     }
   };
 
   return (
     <>
-      <span onClick={() => setToggleEdit(false)}>Close</span>
-
       <table>
         <thead>
           <tr>
@@ -72,7 +80,11 @@ function EditRun({ selectedRun, getRuns, setToggleEdit }: EditRunProps) {
                 type="number"
                 ref={minutesRef}
                 min={0}
-                defaultValue={selectedRun?.minutes}
+                defaultValue={
+                  selectedRun?.seconds
+                    ? Math.floor(selectedRun?.seconds / 60)
+                    : 0
+                }
               ></input>
             </td>
             <td>
@@ -81,14 +93,26 @@ function EditRun({ selectedRun, getRuns, setToggleEdit }: EditRunProps) {
                 ref={secondsRef}
                 min={0}
                 max={59}
-                defaultValue={selectedRun?.seconds}
+                defaultValue={
+                  selectedRun?.seconds
+                    ? Math.floor(selectedRun?.seconds % 60)
+                    : 0
+                }
               ></input>
             </td>
             <td>
               <input
                 type="text"
                 ref={dateRef}
-                defaultValue={selectedRun?.date}
+                placeholder="YYYY-MM-DD"
+                defaultValue={
+                  new Date(selectedRun?.date ?? 0).getFullYear() +
+                  "-" +
+                  (new Date(selectedRun?.date ?? 0).getMonth() + 1) +
+                  "-" +
+                  new Date(selectedRun?.date ?? 0).getDate()
+                }
+                maxLength={10}
               ></input>
             </td>
             <td>
@@ -97,6 +121,7 @@ function EditRun({ selectedRun, getRuns, setToggleEdit }: EditRunProps) {
           </tr>
         </tbody>
       </table>
+      <button onClick={() => setToggleEdit(false)}>Cancel</button>
     </>
   );
 }

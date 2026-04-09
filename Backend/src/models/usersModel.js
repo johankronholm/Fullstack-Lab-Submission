@@ -7,14 +7,22 @@ model.createUser = async (username, password) => {
     return false;
   }
   try {
-    const found = await usersModel.findOne({ username: username });
+    const found = await usersModel.findOne({ username: String(username).toLocaleLowerCase });
     if (found) {
       return false;
     } else {
       const newUser = { username: username, password: password };
       const createdUser = await usersModel.create(newUser);
-      await personalBestModel.create({ userId: createdUser._id, pb500: null, pb1km: null, pb5km: null, pb10km: null, pb21km: null, pb42km: null });
-      return newUser;
+      await personalBestModel.create({
+        userId: createdUser._id,
+        pb500: null,
+        pb1km: null,
+        pb5km: null,
+        pb10km: null,
+        pb21km: null,
+        pb42km: null,
+      });
+      return createdUser;
     }
   } catch (error) {
     console.error(error);

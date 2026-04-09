@@ -30,14 +30,19 @@ model.createRun = async (userId, title, distance, minutes, seconds, date) => {
     return false;
   }
 
-  const minutesToSeconds = minutesNumber * 60;
+  if (minutesNumber === 0 && secondsNumber === 0) {
+    return false;
+  }
 
   const parsedDate = new Date(date);
 
   if (date == null || date === "") {
     return false;
   }
+
+  const minutesToSeconds = minutesNumber * 60;
   const totalSeconds = Number(seconds) + minutesToSeconds;
+
   const newRun = {
     userId: userId,
     title: title,

@@ -4,14 +4,14 @@ import PersonalBest from "./PersonalBest";
 
   type HomeProps = {
     user: User;
-    setUser: Function;
+    clearLocalUser: Function;
   };
-function Home( {user, setUser } : HomeProps ) {
+function Home( {user, clearLocalUser } : HomeProps ) {
 
   return (
     <>
       <h1>Welcome {user.username}!</h1>
-      <span onClick={() => setUser(null)}>Logout</span>
+      <span onClick={() => clearLocalUser()}>Logout</span>
       <hr></hr>
       <RunTable user={user}/>  
       <hr></hr>
