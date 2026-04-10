@@ -37,13 +37,13 @@ function App() {
 
   return (
     <>
+      <header>
+        <h1>RunTracker</h1>
+      </header>
       {user && <Home clearLocalUser={clearLocalUser} user={user} />}
       {!user && <Login saveLocalUser={saveLocalUser} />}
+     
     </>
   );
 }
 export default App;
-
-//- Add: Status messages in UI (loading and error states
-//- Fix: Minutes and seconds format in personal best table
-//- Iteration 2 (Login): Localstorage added for login cookie

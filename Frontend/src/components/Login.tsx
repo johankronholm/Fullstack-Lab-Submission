@@ -1,13 +1,16 @@
 import { useRef } from "react";
 import { useState } from "react";
+import "../styles/login.css";
 
 type LoggedInProps = {
   saveLocalUser: Function;
 };
 
 function Login({ saveLocalUser }: LoggedInProps) {
-  const [loginStatus, setLoginStatus] = useState("Enter forms below");
-  const [registerStatus, setRegisterStatus] = useState("Enter forms below");
+  const [loginStatus, setLoginStatus] = useState(null);
+  const [registerStatus, setRegisterStatus] = useState(
+    "Please enter your desired username and password.",
+  );
   const [toggleCreateUser, setToggleCreateUser] = useState(false);
 
   const usernameRef = useRef<HTMLInputElement>(null);
@@ -48,63 +51,88 @@ function Login({ saveLocalUser }: LoggedInProps) {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <p>{loginStatus}</p>
-      <input
-        type="text"
-        ref={usernameRef}
-        placeholder="Username"
-        onClick={() => {
-          if (usernameRef.current) {
-            usernameRef.current.value = "";
-          }
-        }}
-      ></input>
-      <input
-        type="password"
-        ref={passwordRef}
-        placeholder="Password"
-        onClick={() => {
-          if (passwordRef.current) {
-            passwordRef.current.value = "";
-          }
-        }}
-      ></input>
-      <button name="submit" onClick={login}>
-        Login
-      </button>
-      <div onClick={() => setToggleCreateUser((prev) => !prev)}>
-        ..or create a new user
-      </div>
+    <div className="outer-container">
+      <div className="inner-container">
+        {!toggleCreateUser && (
+          <>
+            <h2>Welcome</h2>
+            {loginStatus && <p className="status">{loginStatus}</p>}
+            <div className="form">
+            <input
+              type="text"
+              className="prim-field"
+              ref={usernameRef}
+              placeholder="Username"
+              onClick={() => {
+                if (usernameRef.current) {
+                  usernameRef.current.value = "";
+                }
+              }}
+            ></input>
+            <input
+              type="password"
+              ref={passwordRef}
+              placeholder="Password"
+              className="prim-field"
+              onClick={() => {
+                if (passwordRef.current) {
+                  passwordRef.current.value = "";
+                }
+              }}
+            ></input>
+            <button className="prim-button" name="submit" onClick={login}>
+              Log in
+            </button>
+            <button
+              className="link"
+              onClick={() => setToggleCreateUser((prev) => !prev)}
+            >
+              Register
+            </button>
+            </div>
+          </>
+        )}
 
-      {toggleCreateUser && (
-        <div>
-          <h3>Create a new user</h3>
-          <p>{registerStatus}</p>
-          <input
-            type="text"
-            ref={newUsernameRef}
-            placeholder={"Username"}
-            onClick={() => {
-              if (newUsernameRef.current) {
-                newUsernameRef.current.value = "";
-              }
-            }}
-          ></input>
-          <input
-            type="text"
-            ref={newPasswordRef}
-            placeholder={"Password"}
-            onClick={() => {
-              if (newPasswordRef.current) {
-                newPasswordRef.current.value = "";
-              }
-            }}
-          ></input>
-          <button onClick={register}>Create user</button>
-        </div>
-      )}
+        {toggleCreateUser && (
+          <>
+            <h2>Register</h2>
+            <p className="status">{registerStatus}</p>
+            <div className="form">
+            <input
+              type="text"
+              className="prim-field"
+              ref={newUsernameRef}
+              placeholder={"Username"}
+              onClick={() => {
+                if (newUsernameRef.current) {
+                  newUsernameRef.current.value = "";
+                }
+              }}
+            ></input>
+            <input
+              type="text"
+              className="prim-field"
+              ref={newPasswordRef}
+              placeholder={"Password"}
+              onClick={() => {
+                if (newPasswordRef.current) {
+                  newPasswordRef.current.value = "";
+                }
+              }}
+            ></input>
+            <button className="prim-button" onClick={register}>
+              Create user
+            </button>
+            <button
+              className="link"
+              onClick={() => setToggleCreateUser((prev) => !prev)}
+            >
+              Return to login
+            </button>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
