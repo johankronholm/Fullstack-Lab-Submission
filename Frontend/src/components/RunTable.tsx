@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
 import type { Run } from "../types/run";
+import "../styles/runtable.css";
 
 type RunTableProps = {
   user: User;
@@ -14,7 +15,7 @@ function RunTable({ user }: RunTableProps) {
   const [editToggled, setToggleEdit] = useState(false);
   const [runToEdit, setRunToEdit] = useState<Run | null>(null);
   const [fetchedRuns, setFetchedRuns] = useState<Run[]>([]);
-  const [maxElements, setMaxElements] = useState<number>(10);
+  const [maxElements, setMaxElements] = useState<number>(7);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(null);
 
@@ -99,145 +100,153 @@ function RunTable({ user }: RunTableProps) {
   };
 
   const incrementPageNumber = () => {
-    setMaxElements((prev) => (prev += 10));
+    setMaxElements((prev) => (prev += 7));
     console.log(maxElements);
   };
   const decrementPageNumber = () => {
-    if (maxElements > 10) {
-      setMaxElements((prev) => (prev -= 10));
+    if (maxElements > 7) {
+      setMaxElements((prev) => (prev -= 7));
     }
   };
 
   return (
     <>
-      <div>
-        {error && (
-          <div>
-            Error: {error} <button onClick={() => setError(null)}>Close</button>
-          </div>
-        )}
-        {!loaded && <span>Loading</span>}
-        {editToggled && runToEdit && (
-          <EditRun
-            key={runToEdit._id}
-            getRuns={getRuns}
-            selectedRun={runToEdit}
-            setToggleEdit={setToggleEdit}
-            setError={setError}
-          />
-        )}
-        <h2>Latest runs</h2>
+      {!loaded && <span>Loading</span>}
+      {editToggled && runToEdit && (
+        <EditRun
+          key={runToEdit._id}
+          getRuns={getRuns}
+          selectedRun={runToEdit}
+          setToggleEdit={setToggleEdit}
+          setError={setError}
+        />
+      )}
+      <h2 className="home-header">Latest runs</h2>
+      <div className="latest-container">
+        <button className="prim-button" onClick={() => setToggleCreate(true)}>
+          Add new run
+        </button>
         {fetchedRuns.length > 0 && (
-          <table>
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Distance</th>
-                <th>Time</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fetchedRuns.slice(maxElements - 10, maxElements).map((r) => {
-                const minutes = Math.floor(r.seconds / 60);
-                const seconds = r.seconds % 60;
-                return (
-                  <tr key={r._id}>
-                    <td>{r.title}</td>
-                    <td>{r.distance} km</td>
-                    <td>
-                      {minutes}m{seconds}s
-                    </td>
-                    <td>
-                      {new Date(r.date).getDate()}/
-                      {new Date(r.date).getMonth() + 1}/
-                      {new Date(r.date).getFullYear()}
-                    </td>
-                    <td>
-                      <span onClick={() => configureRun(r._id)}>Edit</span>
-                    </td>
-                    <td>
-                      <span onClick={() => deleteRun(r._id)}>Remove</span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
-        {fetchedRuns.length === 0 && <span>No runs added yet.</span>}
-
-        {fetchedRuns.length > 0 && (
-          <div>
-            Page {maxElements / 10} of {Math.ceil(fetchedRuns.length / 10)}
+          <div className="latest-table">
+            {fetchedRuns.slice(maxElements - 7, maxElements).map((r) => {
+              const minutes = Math.floor(r.seconds / 60);
+              const seconds = r.seconds % 60;
+              return (
+                <div className="run">
+                  <span className="run-title">{r.title}</span>
+                  <span>{r.distance} km</span>
+                  <span>
+                    {minutes}m{seconds}s
+                  </span>
+                  <span>
+                    {new Date(r.date).getDate()}/
+                    {new Date(r.date).getMonth() + 1}/
+                    {new Date(r.date).getFullYear()}
+                  </span>
+                  <div className="run-options">
+                    <span onClick={() => configureRun(r._id)}>E</span>
+                    <span onClick={() => deleteRun(r._id)}>R</span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
 
-        {maxElements > 10 && (
-          <span onClick={decrementPageNumber}>Previous </span>
-        )}
+        {fetchedRuns.length === 0 && <p>No runs added yet.</p>}
 
-        {fetchedRuns.length > maxElements && (
-          <span onClick={incrementPageNumber}>Next </span>
-        )}
+        <div className="pagination">
+          {fetchedRuns.length > 0 && (
+            <p>
+              Page {maxElements / 7} of {Math.ceil(fetchedRuns.length / 7)}
+            </p>
+          )}
+          <div>
+            {maxElements > 7 && (
+              <button className="link" onClick={decrementPageNumber}>
+                Previous{" "}
+              </button>
+            )}
+
+            {fetchedRuns.length > maxElements && (
+              <button className="link" onClick={incrementPageNumber}>
+                Next{" "}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
-      <span onClick={() => setToggleCreate(true)}>Add new run</span>
 
       {createToggled && (
-        <div>
-          <h2>New run</h2>
+        <div className="create-container">
+          <h2 className="create-header">New run</h2>
+          {error && (
+            <div>
+              Error: {error}{" "}
+              <button className="link" onClick={() => setError(null)}>Close</button>
+            </div>
+          )}
+          <input
+            className="prim-field"
+            type="text"
+            defaultValue={"My Run"}
+            placeholder="Title"
+            ref={titleRef}
+          />
 
-          <table>
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Distance</th>
-                <th>Minutes</th>
-                <th>Seconds</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <input type="text" defaultValue={"My Run"} ref={titleRef} />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    min={0}
-                    placeholder="Distance (km)"
-                    ref={distanceRef}
-                  />
-                </td>
-                <td>
-                  <input type="number" min={0} ref={minutesRef} />
-                </td>
-                <td>
-                  <input type="number" min={0} max={59} ref={secondsRef} />
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    placeholder="YYYY-MM-DD"
-                    defaultValue={
-                      new Date().getFullYear() +
-                      "-" +
-                      (new Date().getMonth() + 1) +
-                      "-" +
-                      new Date().getDate()
-                    }
-                    ref={dateRef}
-                    maxLength={10}
-                  />
-                </td>
-                <td>
-                  <button onClick={createRun}>Add</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <button onClick={() => setToggleCreate(false)}>Cancel</button>
+          <input
+            className="prim-field"
+            type="number"
+            min={0}
+            max={1000}
+            placeholder="Distance (km)"
+            ref={distanceRef}
+          />
+
+          <input
+            className="prim-field"
+            type="number"
+            min={0}
+            max={1000}
+            placeholder="Minutes"
+            ref={minutesRef}
+          />
+
+          <input
+            className="prim-field"
+            type="number"
+            placeholder="Seconds"
+            min={0}
+            max={59}
+            ref={secondsRef}
+          />
+
+          <input
+            className="prim-field"
+            type="text"
+            placeholder="Date (YYYY-MM-DD)"
+            defaultValue={
+              new Date().getFullYear() +
+              "-" +
+              (new Date().getMonth() + 1) +
+              "-" +
+              new Date().getDate()
+            }
+            ref={dateRef}
+            maxLength={10}
+          />
+          <div className="options">
+            <button className="prim-button" onClick={createRun}>
+              Add
+            </button>
+
+            <button
+              className="prim-button"
+              onClick={() => setToggleCreate(false)}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
     </>

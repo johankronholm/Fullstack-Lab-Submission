@@ -1,0 +1,23 @@
+body {
+    display: grid;
+    color: #fff;
+
+}
+
+.main-container {
+    width: 95vw;
+    border: 0.1rem solid #ffffff11;
+    border-radius: 1rem;
+    background-color: #ffffff12;
+}
+
+.menu {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #ffffff11;
+}
+
+.menu span {
+    font-weight: bold;
+}

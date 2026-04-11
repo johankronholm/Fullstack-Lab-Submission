@@ -1,0 +1,13 @@
+{
+  "name": "fullstack-lab-submission-workspace",
+  "private": true,
+  "scripts": {
+    "frontend": "npm --prefix Frontend run dev",
+    "backend": "npm --prefix Backend start",
+    "dev": "concurrently -k -n frontend,backend -c blue,green \"npm run frontend\" \"npm run backend\"",
+    "start": "npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

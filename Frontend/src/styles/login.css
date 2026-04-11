@@ -15,7 +15,7 @@
 .status {
   width: 50%;
   text-align: center;
-  border: 0.1rem solid #ffffff19;
+  border: 0.1rem solid #ffffff22;
   border-radius: 0.5rem;
   color: #ffffff;
   padding: 0.5rem;
@@ -28,13 +28,13 @@
   justify-content: center;
   align-items: center;
   height: 75vh;
-  width: 75vw;
+  width: 90vw;
   position: relative;
   overflow: hidden;
   isolation: isolate;
   background: #090316;
   border-radius: 5rem 1rem 5rem;
-  border: 0.1rem solid #ffffff2c;
+  border: 0.1rem solid #ffffff11;
 }
 
 .outer-container::before {

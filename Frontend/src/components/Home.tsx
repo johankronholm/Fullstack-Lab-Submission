@@ -1,22 +1,24 @@
 import type { User } from "../types/user";
 import RunTable from "./RunTable";
 import PersonalBest from "./PersonalBest";
+import "../styles/home.css";
 
-  type HomeProps = {
-    user: User;
-    clearLocalUser: Function;
-  };
-function Home( {user, clearLocalUser } : HomeProps ) {
-
+type HomeProps = {
+  user: User;
+  clearLocalUser: Function;
+};
+function Home({ user, clearLocalUser }: HomeProps) {
   return (
-    <>
-      <h1>Welcome {user.username}!</h1>
-      <span onClick={() => clearLocalUser()}>Logout</span>
-      <hr></hr>
-      <RunTable user={user}/>  
-      <hr></hr>
-      <PersonalBest user={user}/>
-    </>
+    <div className="main-container">
+      <nav className="menu">
+        <span>{user.username} </span>{" "}
+        <button className="link" onClick={() => clearLocalUser()}>
+          Logout
+        </button>
+      </nav>
+      <RunTable user={user} />
+      <PersonalBest user={user} />
+    </div>
   );
 }
 

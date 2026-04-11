@@ -42,8 +42,13 @@ function App() {
       </header>
       {user && <Home clearLocalUser={clearLocalUser} user={user} />}
       {!user && <Login saveLocalUser={saveLocalUser} />}
-     
+      <footer>
+        <p>© 2026 Johan - All right reserved.</p>
+      </footer>
     </>
   );
 }
 export default App;
+
+//Fix: Script to start backend and frontend concurrently 
+//Add: 
