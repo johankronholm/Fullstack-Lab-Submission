@@ -32,15 +32,26 @@ function EditRun({
       return;
     }
 
-    if (!distanceRef.current?.value || distanceRef.current?.value === "0") {
-      setError("A distance must be set!");
+    const distance = Number(distanceRef.current?.value);
+    const minutes = Number(minutesRef.current?.value || 0);
+    const seconds = Number(secondsRef.current?.value || 0);
+
+    if (Number.isNaN(distance) || distance <= 0) {
+      setError("Distance must be a valid number!");
       return;
     }
 
-    if (
-      (!minutesRef.current?.value || minutesRef.current?.value === "0") &&
-      (!secondsRef.current?.value || secondsRef.current?.value === "0")
-    ) {
+    if (Number.isNaN(minutes) || minutes < 0) {
+      setError("Minutes must be a valid number!");
+      return;
+    }
+
+    if (Number.isNaN(seconds) || seconds < 0 || seconds > 59) {
+      setError("Seconds must be a valid number between 0 and 59!");
+      return;
+    }
+
+    if (minutes === 0 && seconds === 0) {
       setError("Minutes or seconds must be set!");
       return;
     }
@@ -48,9 +59,9 @@ function EditRun({
     const body = {
       id: selectedRun?._id,
       title: titleRef.current?.value,
-      distance: distanceRef.current?.value,
-      minutes: minutesRef.current?.value,
-      seconds: secondsRef.current?.value,
+      distance: distance,
+      minutes: minutes,
+      seconds: seconds,
       date: dateRef.current?.value,
     };
 
@@ -86,6 +97,7 @@ function EditRun({
         ref={titleRef}
         defaultValue={selectedRun?.title}
         className="prim-field"
+        placeholder="Title"
       ></input>
 
       <input
@@ -94,6 +106,7 @@ function EditRun({
         min={0}
         defaultValue={selectedRun?.distance}
         className="prim-field"
+        placeholder="Distance (km)"
       ></input>
 
       <input
@@ -104,6 +117,7 @@ function EditRun({
           selectedRun?.seconds ? Math.floor(selectedRun?.seconds / 60) : 0
         }
         className="prim-field"
+        placeholder="Minutes"
       ></input>
 
       <input
@@ -115,6 +129,7 @@ function EditRun({
           selectedRun?.seconds ? Math.floor(selectedRun?.seconds % 60) : 0
         }
         className="prim-field"
+        placeholder="Seconds"
       ></input>
 
       <input
@@ -130,6 +145,7 @@ function EditRun({
         }
         maxLength={10}
         className="prim-field"
+        aria-placeholder="Date (YYYY-MM-DD)"
       ></input>
       <div className="options">
         <button className="prim-button" onClick={saveEdit}>

@@ -12,6 +12,10 @@ function PersonalBest({ user }: PersonalBestProps) {
   const [fetchedPB, setFetchedPB] = useState<PersonalBestData | null>(null);
 
   useEffect(() => {
+    if (!user?._id) {
+      return;
+    }
+
     const getPB = async () => {
       const response = await fetch(
         `http://localhost:3000/api/runs/pb?userId=${user._id}`,

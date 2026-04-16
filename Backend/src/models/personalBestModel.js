@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { model as personalBestModel } from "./schemas/personalBest.js";
 import { model as runModel } from "./schemas/run.js";
 
@@ -123,6 +124,11 @@ model.getPB = async (userId) => {
     pb21km: null,
     pb42km: null,
   };
+
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    return false;
+  }
+
   try {
     const data = await personalBestModel.findOne({ userId: userId });
     if (data) {

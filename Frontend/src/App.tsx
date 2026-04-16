@@ -18,14 +18,30 @@ function App() {
   const loadLocalUser = () => {
     const localUser = localStorage.getItem("localUser");
     if (localUser) {
-      setUser(JSON.parse(localUser));
-      console.log("Local user loaded!");
+      try {
+        const parsedUser = JSON.parse(localUser);
+        if (parsedUser?._id) {
+          setUser(parsedUser);
+          console.log("Local user loaded!");
+        } else {
+          localStorage.removeItem("localUser");
+          console.log("Invalid local user removed!");
+        }
+      } catch {
+        localStorage.removeItem("localUser");
+        console.log("Corrupted local user removed!");
+      }
     } else {
       console.log("No local user found!");
     }
   };
 
   const saveLocalUser = (user: User) => {
+    if (!user?._id) {
+      console.log("Invalid user was not saved!");
+      return;
+    }
+
     localStorage.setItem("localUser", JSON.stringify(user));
     setUser(user);
     console.log("Local user saved!");

@@ -51,15 +51,26 @@ function RunTable({ user }: RunTableProps) {
       return;
     }
 
-    if (!distanceRef.current?.value || distanceRef.current?.value === "0") {
-      setError("A distance must be set!");
+    const distance = Number(distanceRef.current?.value);
+    const minutes = Number(minutesRef.current?.value || 0);
+    const seconds = Number(secondsRef.current?.value || 0);
+
+    if (Number.isNaN(distance) || distance <= 0) {
+      setError("Distance must be a valid number!");
       return;
     }
 
-    if (
-      (!minutesRef.current?.value || minutesRef.current?.value === "0") &&
-      (!secondsRef.current?.value || secondsRef.current?.value === "0")
-    ) {
+    if (Number.isNaN(minutes) || minutes < 0) {
+      setError("Minutes must be a valid number!");
+      return;
+    }
+
+    if (Number.isNaN(seconds) || seconds < 0 || seconds > 59) {
+      setError("Seconds must be a valid number between 0 and 59!");
+      return;
+    }
+
+    if (minutes === 0 && seconds === 0) {
       setError("Minutes or seconds must be set!");
       return;
     }
@@ -68,9 +79,9 @@ function RunTable({ user }: RunTableProps) {
     const body = {
       id: user._id,
       title: titleRef.current?.value,
-      distance: distanceRef.current?.value,
-      minutes: minutesRef.current?.value,
-      seconds: secondsRef.current?.value,
+      distance: distance,
+      minutes: minutes,
+      seconds: seconds,
       date: newDate,
     };
 

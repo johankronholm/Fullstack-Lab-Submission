@@ -1,5 +1,6 @@
 import { model as usersModel } from "../models/schemas/user.js";
 import { model as personalBestModel } from "../models/schemas/personalBest.js";
+import bcrypt from "bcrypt"
 export const model = {};
 
 model.createUser = async (username, password) => {
@@ -7,13 +8,18 @@ model.createUser = async (username, password) => {
     return false;
   }
   try {
+    const normalizedUsername = String(username).toLocaleLowerCase();
     const found = await usersModel.findOne({
-      username: String(username).toLocaleLowerCase,
+      username: normalizedUsername,
     });
     if (found) {
       return false;
     } else {
-      const newUser = { username: username, password: password };
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = {
+        username: normalizedUsername,
+        password: hashedPassword,
+      };
       const createdUser = await usersModel.create(newUser);
       await personalBestModel.create({
         userId: createdUser._id,
@@ -37,11 +43,13 @@ model.loginUser = async (username, password) => {
     return false;
   }
   try {
-    const user = await usersModel.findOne({ username: username });
+    const normalizedUsername = String(username).toLocaleLowerCase();
+    const user = await usersModel.findOne({ username: normalizedUsername });
     if (!user) {
       return false;
     } else {
-      return user.password === password ? user : false;
+      const isMatch = await bcrypt.compare(password, user.password);
+      return isMatch ? user : false;
     }
   } catch (error) {
     console.error(error);
