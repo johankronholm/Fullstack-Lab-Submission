@@ -99,13 +99,19 @@ model.editRun = async (id, title, distance, minutes, seconds, date) => {
   }
 
   try {
-    const newRun = await runsModel.findByIdAndUpdate(id, {
-      title: title,
-      distance: distance,
-      seconds: totalSeconds,
-      date: parsedDate,
-    });
-    await personalBestsModel.updatePB(newRun, id, totalSeconds);
+    const updatedRun = await runsModel.findByIdAndUpdate(
+      id,
+      {
+        title: title,
+        distance: distance,
+        seconds: totalSeconds,
+        date: parsedDate,
+      },
+      { new: true },
+    );
+
+    await personalBestsModel.removePB(id);
+    await personalBestsModel.updatePB(updatedRun, id, totalSeconds);
     return true;
   } catch (error) {
     return false;

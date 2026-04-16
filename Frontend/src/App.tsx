@@ -66,5 +66,3 @@ function App() {
 }
 export default App;
 
-//Fix: Script to start backend and frontend concurrently 
-//Add: 

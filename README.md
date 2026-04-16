@@ -1,5 +1,5 @@
 # Fullstack-Lab-Submission
-This is my submission for the seminar in the full stack course.
+This is a simple run tracking application that lets you log your runs and monitor your personal bests.
 
 ## Run the app
 
@@ -10,6 +10,8 @@ npm install --prefix Backend
 npm install --prefix Frontend
 npm install
 ```
+
+
 
 Start frontend and backend together from the repository root:
 
