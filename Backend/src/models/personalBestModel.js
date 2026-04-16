@@ -1,5 +1,5 @@
-import { model as personalBestModel } from "./personalBest.js";
-import { model as runModel } from "./run.js";
+import { model as personalBestModel } from "./schemas/personalBest.js";
+import { model as runModel } from "./schemas/run.js";
 
 export const model = {};
 

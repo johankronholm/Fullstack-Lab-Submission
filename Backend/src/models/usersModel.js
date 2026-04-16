@@ -1,5 +1,5 @@
-import { model as usersModel } from "../models/User.js";
-import { model as personalBestModel } from "../models/personalBest.js";
+import { model as usersModel } from "../models/schemas/user.js";
+import { model as personalBestModel } from "../models/schemas/personalBest.js";
 export const model = {};
 
 model.createUser = async (username, password) => {
@@ -7,7 +7,9 @@ model.createUser = async (username, password) => {
     return false;
   }
   try {
-    const found = await usersModel.findOne({ username: String(username).toLocaleLowerCase });
+    const found = await usersModel.findOne({
+      username: String(username).toLocaleLowerCase,
+    });
     if (found) {
       return false;
     } else {

@@ -17,7 +17,7 @@ function RunTable({ user }: RunTableProps) {
   const [fetchedRuns, setFetchedRuns] = useState<Run[]>([]);
   const [maxElements, setMaxElements] = useState<number>(7);
   const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const titleRef = useRef<HTMLInputElement>(null);
   const distanceRef = useRef<HTMLInputElement>(null);
@@ -42,7 +42,25 @@ function RunTable({ user }: RunTableProps) {
   const createRun = async () => {
     const dateValue = dateRef.current?.value;
 
+    if (!titleRef.current?.value) {
+      setError("A title must be set!");
+      return;
+    }
     if (!dateValue) {
+      setError("Date must be in (YYYY-MM-DD) format!");
+      return;
+    }
+
+    if (!distanceRef.current?.value || distanceRef.current?.value === "0") {
+      setError("A distance must be set!");
+      return;
+    }
+
+    if (
+      (!minutesRef.current?.value || minutesRef.current?.value === "0") &&
+      (!secondsRef.current?.value || secondsRef.current?.value === "0")
+    ) {
+      setError("Minutes or seconds must be set!");
       return;
     }
 
@@ -69,6 +87,7 @@ function RunTable({ user }: RunTableProps) {
       setError(data.message);
     } else {
       setError(null);
+      setToggleCreate(false);
       await getRuns();
     }
   };
@@ -111,7 +130,6 @@ function RunTable({ user }: RunTableProps) {
 
   return (
     <>
-      {!loaded && <span>Loading</span>}
       {editToggled && runToEdit && (
         <EditRun
           key={runToEdit._id}
@@ -119,6 +137,7 @@ function RunTable({ user }: RunTableProps) {
           selectedRun={runToEdit}
           setToggleEdit={setToggleEdit}
           setError={setError}
+          error={error}
         />
       )}
       <h2 className="home-header">Latest runs</h2>
@@ -126,6 +145,7 @@ function RunTable({ user }: RunTableProps) {
         <button className="prim-button" onClick={() => setToggleCreate(true)}>
           Add new run
         </button>
+        {!loaded && <span>Loading...</span>}
         {fetchedRuns.length > 0 && (
           <div className="latest-table">
             {fetchedRuns.slice(maxElements - 7, maxElements).map((r) => {
@@ -144,8 +164,18 @@ function RunTable({ user }: RunTableProps) {
                     {new Date(r.date).getFullYear()}
                   </span>
                   <div className="run-options">
-                    <span onClick={() => configureRun(r._id)}>E</span>
-                    <span onClick={() => deleteRun(r._id)}>R</span>
+                    <span
+                      className="edit-button"
+                      onClick={() => configureRun(r._id)}
+                    >
+                      Edit
+                    </span>
+                    <span
+                      className="remove-button"
+                      onClick={() => deleteRun(r._id)}
+                    >
+                      Remove
+                    </span>
                   </div>
                 </div>
               );
@@ -153,7 +183,7 @@ function RunTable({ user }: RunTableProps) {
           </div>
         )}
 
-        {fetchedRuns.length === 0 && <p>No runs added yet.</p>}
+        {loaded && fetchedRuns.length === 0 && <p>No runs added yet.</p>}
 
         <div className="pagination">
           {fetchedRuns.length > 0 && (
@@ -178,12 +208,14 @@ function RunTable({ user }: RunTableProps) {
       </div>
 
       {createToggled && (
-        <div className="create-container">
-          <h2 className="create-header">New run</h2>
+        <div className="modal-container">
+          <h2 className="modal-header">New run</h2>
           {error && (
             <div>
               Error: {error}{" "}
-              <button className="link" onClick={() => setError(null)}>Close</button>
+              <button className="link" onClick={() => setError(null)}>
+                (Close)
+              </button>
             </div>
           )}
           <input

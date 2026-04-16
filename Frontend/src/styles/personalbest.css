@@ -1,15 +1,22 @@
 .personal-best-table {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  padding: 1rem;
-  gap: 1rem;
+
 }
 .table-header {
   font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.201);
+
 }
 
+.personal-best-table span {
+
+  padding: .5rem;
+}
 .personal-best-container {
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
+  padding: .5rem;
 }
+

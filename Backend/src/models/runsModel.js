@@ -1,4 +1,4 @@
-import { model as runsModel } from "./run.js";
+import { model as runsModel } from "./schemas/run.js";
 import { model as personalBestsModel } from "./personalBestModel.js";
 export const model = {};
 
@@ -34,11 +34,11 @@ model.createRun = async (userId, title, distance, minutes, seconds, date) => {
     return false;
   }
 
-  const parsedDate = new Date(date);
-
   if (date == null || date === "") {
     return false;
   }
+
+  const parsedDate = new Date(date);
 
   const minutesToSeconds = minutesNumber * 60;
   const totalSeconds = Number(seconds) + minutesToSeconds;
@@ -83,11 +83,11 @@ model.editRun = async (id, title, distance, minutes, seconds, date) => {
   const minutesToSeconds = minutesNumber * 60;
   const totalSeconds = Number(seconds) + minutesToSeconds;
 
-  const parsedDate = new Date(date);
-
   if (date == null || date === "") {
     return false;
   }
+
+  const parsedDate = new Date(date);
 
   try {
     const found = await runsModel.findById(id);
