@@ -31,6 +31,7 @@
   padding: 0.5rem;
   color: rgb(0, 0, 0);
   border-radius: .5rem;
+  gap: .5rem;
 }
 .run-title {
   word-break: normal;

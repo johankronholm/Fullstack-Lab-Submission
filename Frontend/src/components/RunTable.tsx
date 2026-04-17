@@ -162,12 +162,18 @@ function RunTable({ user }: RunTableProps) {
             {fetchedRuns.slice(maxElements - 7, maxElements).map((r) => {
               const minutes = Math.floor(r.seconds / 60);
               const seconds = r.seconds % 60;
+              const paceInSeconds = Math.round(r.seconds / r.distance);
+              const paceMinutes = Math.floor(paceInSeconds / 60);
+              const paceSeconds = paceInSeconds % 60;
               return (
                 <div className="run">
                   <span className="run-title">{r.title}</span>
                   <span>{r.distance} km</span>
                   <span>
                     {minutes}m{seconds}s
+                  </span>
+                  <span>
+                    {paceMinutes}m{paceSeconds.toString().padStart(2, "0")}s/km
                   </span>
                   <span>
                     {new Date(r.date).getDate()}/
